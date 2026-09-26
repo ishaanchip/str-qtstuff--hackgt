@@ -1,5 +1,9 @@
 # Single-photo color extraction — Phases 1–3
 
+The default recommendation pipeline now generates a personalized palette of up to
+12 colors. See [PALETTE.md](PALETTE.md) for the algorithm, research sources,
+assumptions, and matching against the expanded 100-color clothing library.
+
 ## Web face scan
 
 Run `.venv/bin/python -m backend.app.api --port 5173` from the repository root,

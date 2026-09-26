@@ -13,6 +13,9 @@ from urllib.error import HTTPError, URLError
 
 from .main import DEFAULT_MODELS
 from .pipeline import analyze_photos
+import numpy as np
+from .color.conversions import hex_to_rgb, rgb_to_lab
+from .data.clothing_colors import CLOTHING_COLORS
 
 WEB_ROOT = Path(__file__).resolve().parents[2] / 'web'
 MAX_UPLOAD = 10 * 1024 * 1024
@@ -90,12 +93,50 @@ CATALOG = [
 
 
 def match_clothing(colors):
+    if colors and all(color.get('source') == 'generated' for color in colors):
+        return match_generated_palette(colors)
     by_name = {color['name']: color for color in colors}
     return sorted([
         {'id': index, 'name': name, 'category': category, 'color': color,
          'hex': by_name[color]['hex'], 'score': by_name[color]['score']}
         for index, (name, category, color) in enumerate(CATALOG) if color in by_name
     ], key=lambda item: -item['score'])
+
+
+def match_generated_palette(colors):
+    """Keep real catalog HEX values; rank by proximity to the generated palette."""
+    library = {color['name']: color for color in CLOTHING_COLORS}
+    palette_labs = np.array([rgb_to_lab(hex_to_rgb(color['hex'])) for color in colors])
+    # Illustrative variants, not claims of live stock. Preserve original IDs.
+    variants = list(CATALOG)
+    seen = set(variants)
+    for name, category in (('Everyday tee', 'Tops'), ('Overshirt', 'Layers'),
+                           ('Straight-leg trousers', 'Bottoms'), ('Woven scarf', 'Accessories')):
+        for color in library:
+            variant = (name, category, color)
+            if variant not in seen:
+                variants.append(variant)
+                seen.add(variant)
+    items = []
+    for index, (name, category, color) in enumerate(variants):
+        value = library[color]['hex']
+        distances = np.linalg.norm(palette_labs - rgb_to_lab(hex_to_rgb(value)), axis=1)
+        nearest = int(np.argmin(distances))
+        distance = float(distances[nearest])
+        match = colors[nearest]
+        items.append({'id': index, 'name': name, 'category': category, 'color': color,
+                      'hex': value, 'score': float(match['score'] * np.exp(-0.5 * (distance / 30) ** 2)),
+                      'palette_hex': match['hex'], 'palette_distance_delta_e76': distance})
+    ranked = sorted(items, key=lambda item: -item['score'])
+    # Show the best 12 per category instead of hundreds of repeated silhouettes.
+    counts = {}
+    visible = []
+    for item in ranked:
+        category = item['category']
+        if counts.get(category, 0) < 12:
+            visible.append(item)
+            counts[category] = counts.get(category, 0) + 1
+    return visible
 
 
 class Handler(SimpleHTTPRequestHandler):

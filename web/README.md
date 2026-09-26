@@ -1,5 +1,9 @@
 # Local face scan
 
+Scans now show up to 12 generated personal palette colors and 48 illustrative
+clothing suggestions (12 per category), matched against 100 named clothing colors.
+See [palette methodology](../backend/PALETTE.md) for sources and scoring assumptions.
+
 From the repository root:
 
 ```sh

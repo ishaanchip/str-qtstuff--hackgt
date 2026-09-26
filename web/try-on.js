@@ -122,10 +122,12 @@ window.addEventListener('pagehide', () => stop());
 if (!valid) $('no-scan').hidden = false;
 else {
   $('fitting-room').hidden = false;
-  $('summary').textContent = `${result.profile?.season || 'Your personal'} palette · recommended looks based on your skin, hair, and eye colors.`;
-  for (const color of (result.recommended_colors || []).slice(0, 9)) {
+  $('summary').textContent = 'Your personal palette · generated from your skin, hair, and eye colors.';
+  for (const color of (result.recommended_colors || []).slice(0, 12)) {
     const card = element('div', 'swatch'); const fill = element('div', 'swatch-color'); fill.style.background = color.hex;
-    const text = element('div', 'swatch-text'); text.append(element('strong', '', color.name), element('span', '', `${Number(color.score).toFixed(1)} / 100`)); card.append(fill, text); $('palette').append(card);
+    const text = element('div', 'swatch-text'); text.append(element('strong', '', color.name), element('span', '', `${Number(color.score).toFixed(1)} / 100`));
+    if (color.explanation) card.title = color.explanation;
+    card.append(fill, text); $('palette').append(card);
   }
   select(result.clothing[0]);
 }

@@ -9,7 +9,7 @@ from .main import analyze_image, load_image, DEFAULT_MODELS
 from .vision.aggregation import aggregate_photos
 from .color.profile import build_profile
 from .color.seasonal import classify_season
-from .data.clothing_colors import CLOTHING_COLORS
+from .recommendation.palette_generator import generate_palette
 from .recommendation.color_ranker import rank_colors, group_colors
 from .utils.visualization import save_debug
 
@@ -68,9 +68,10 @@ def analyze_photos(image_paths: Sequence[str | Path | BytesIO], model_dir: Path 
     season = classify_season(profile)
     profile.update(season=season['season'], season_confidence=season['confidence'],
                    season_scores=season['scores'], season_analysis=season)
-    ranked = rank_colors(profile, CLOTHING_COLORS if candidate_colors is None else candidate_colors)
+    ranked = generate_palette(profile) if candidate_colors is None else rank_colors(profile, candidate_colors)
     return {'photos_requested': len(image_paths), 'photos_analyzed': analyzed,
             'per_photo': photos, 'profile': profile, 'recommended_colors': ranked,
+            'palette_method': 'generated_cielch_v1' if candidate_colors is None else 'custom_candidates',
             'color_groups': group_colors(ranked), 'warnings': list(dict.fromkeys(warnings)),
             'method_note': 'Numerical styling heuristics; scores are not calibrated probabilities. '
                            'Season labels are approximate. All colors remain available to wear.'}

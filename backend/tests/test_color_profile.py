@@ -149,7 +149,7 @@ def test_single_photo_and_unreliable_measurements():
 def test_scores_bounded_weighted_explainable_and_groups_partition():
     profile = profile_for()
     ranked = rank_colors(profile, CLOTHING_COLORS)
-    assert 30 <= len(ranked) <= 50
+    assert len(ranked) == len(CLOTHING_COLORS)
     assert [r['score'] for r in ranked] == sorted([r['score'] for r in ranked], reverse=True)
     for color in ranked:
         assert 0 <= color['score'] <= 100

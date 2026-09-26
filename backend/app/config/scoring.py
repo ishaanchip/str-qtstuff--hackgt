@@ -1,6 +1,8 @@
 """Continuous garment scoring weights, widths and display groups."""
-SCORE_WEIGHTS = {'temperature': 0.25, 'value': 0.20, 'chroma': 0.15,
-                 'harmony': 0.15, 'season': 0.15, 'eyes': 0.10}
+# Product heuristics, not coefficients fitted to research. See backend/PALETTE.md.
+# Season remains a descriptive diagnostic; it does not determine the ranking.
+SCORE_WEIGHTS = {'temperature': 0.30, 'value': 0.25, 'chroma': 0.20,
+                 'harmony': 0.15, 'season': 0.0, 'eyes': 0.10}
 TEMPERATURE_WIDTH = 0.65
 NEUTRAL_TEMPERATURE_EXTRA_WIDTH = 0.65
 VALUE_WIDTH = 0.30

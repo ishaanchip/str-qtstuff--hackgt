@@ -38,7 +38,8 @@ def test_three_photos_preserve_per_photo_and_reject_outlier(extraction, tmp_path
     assert len(result['per_photo']) == 3
     assert result['per_photo'][2]['skin']['lab'] == [25, -20, -15]
     assert result['profile']['skin']['outlier_photos'] == [3]
-    assert len(result['recommended_colors']) == 44
+    assert 6 <= len(result['recommended_colors']) <= 12
+    assert result['palette_method'] == 'generated_cielch_v1'
     assert all(p['lighting_score'] == 0.95 for p in result['per_photo'])
     assert list(tmp_path.iterdir()) == []  # No photos, masks or output stored by default.
     json.dumps(result, allow_nan=False)
