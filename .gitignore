@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+models/*.task
+models/*.download
+output/
+.DS_Store
+node_modules/
+web/dist/
+.env
+.env.*
+!.env.example
+web/test-results/
+web/playwright-report/

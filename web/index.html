@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#152c24" />
+  <title>Fitting Room · Lucy</title>
+</head>
+<body>
+  <main>
+    <header><a class="brand" href="/">FR<span>FITTING ROOM</span></a><span class="tag">POWERED BY LUCY 2.5</span></header>
+    <section class="intro"><div><p class="eyebrow">YOUR CAMERA. A NEW LOOK.</p><h1>Try it on.<br><em>See it move.</em></h1></div><p class="intro-copy">Build an outfit, step into frame, and see your next look come to life.</p></section>
+    <div id="setup" class="notice" hidden>Add your Decart API key to <code>web/.env.local</code> as <code>DECART_API_KEY</code>, then restart the server.</div>
+    <div class="workspace">
+      <aside class="controls">
+        <p class="eyebrow">01 / BUILD YOUR OUTFIT</p>
+        <p class="outfit-help">Add any combination. All selected items are worn together.</p>
+        <div id="outfit-slots"></div>
+        <p id="filename" class="file-note" role="status">No items selected.</p>
+        <details id="reference-details" hidden><summary>View outfit reference</summary><img id="outfit-reference" alt="Combined reference board for the selected outfit" /></details>
+        <label class="field-label" for="prompt">02 / FINISHING TOUCHES</label>
+        <textarea id="prompt" rows="3" maxlength="2000" placeholder="Optional: tuck in the shirt, wear the bag over one shoulder…"></textarea>
+        <label class="checkbox"><input id="enhance" type="checkbox" checked /> Enhance instructions with Lucy</label>
+        <button id="start" class="primary" disabled>Start try-on <span>↗</span></button>
+        <div class="button-row"><button id="apply" disabled>Apply outfit</button><button id="stop" disabled>Stop camera</button></div>
+        <p class="privacy">Starting sends your camera video and selected item images to Decart. No microphone. API usage applies; each session ends after five minutes.</p>
+      </aside>
+      <section class="stage" aria-label="Live try-on preview">
+        <div class="stage-heading"><h2>Your fitting room</h2><span id="status" role="status">Ready when you are</span></div>
+        <div class="output-wrap"><video id="video-output" autoplay playsinline muted aria-label="Lucy try-on output"></video><div id="output-empty" class="empty"><svg class="shirt-symbol" width="70" height="70" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M23 12c1 8 17 8 18 0l15 9-7 12-7-4v25H22V29l-7 4-7-12 15-9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><h3>A new look starts here.</h3><p>Add your outfit and start your camera.<br>Keep your full body in frame for jeans.</p></div><span class="video-label">LUCY TRY-ON</span></div>
+        <div class="stage-bottom"><div class="camera-wrap"><video id="video-input" autoplay playsinline muted aria-label="Original camera preview"></video><span class="video-label">ORIGINAL</span></div><p>Move naturally.<br><span>Good light and a clear view of the selected clothing areas give the best results.</span></p></div>
+      </section>
+    </div>
+    <p id="error" role="alert" hidden></p>
+    <footer><span>LIVE VIDEO TRY-ON</span><span>AI-generated preview · appearance and fit may vary</span></footer>
+  </main>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
