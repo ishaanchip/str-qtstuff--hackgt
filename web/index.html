@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Fitting Room · Your palette</title><link rel="stylesheet" href="/scan.css"><script type="module" src="/scan.js"></script></head>
+<body><main>
+<header><a href="/" class="brand">FR <span>FITTING ROOM</span></a><span class="tag">PERSONAL COLOR STUDIO</span></header>
+<section class="intro"><div><p class="eyebrow">A LITTLE SCIENCE. A LOT OF YOU.</p><h1>Find your colors.<br><em>Make them yours.</em></h1></div><p>One portrait. A palette inspired by your natural coloring. Clothing ideas to bring it to life.</p></section>
+<div class="workspace">
+<section class="capture panel"><p class="eyebrow">01 / YOUR FACE SCAN</p><h2>Start with good light.</h2><p>Face forward in soft daylight. Keep your face, hair, and eyes visible, with only you in the frame.</p>
+<div class="viewfinder"><video id="camera" autoplay muted playsinline hidden></video><img id="preview" alt="Portrait selected for color analysis" hidden><div id="placeholder"><span class="face-icon">◯</span><strong>Your palette starts here</strong><p>Take a photo or upload a portrait</p></div></div>
+<div class="actions"><button id="open-camera">Use camera</button><label class="upload" for="photo">Upload photo</label><input type="file" id="photo" accept="image/jpeg,image/png" hidden></div>
+<div class="actions" id="camera-actions" hidden><button id="capture">Capture photo</button><button id="close-camera">Close camera</button></div>
+<button class="primary" id="analyze" disabled>Find my looks <span>↗</span></button><p id="status" role="status" aria-live="polite">JPEG or PNG · up to 10 MB</p><p id="error" role="alert" hidden></p>
+<p class="privacy">Your camera opens only when you choose. Analysis runs locally on this computer; portraits are processed in memory and aren't saved.</p></section>
+<section class="results panel" aria-label="Analysis results"><p class="eyebrow">02 / YOUR COLOR STORY</p><div id="results-empty"><h2>A palette that starts with you.</h2><p>Your skin, hair, and eye colors help us score clothing colors for harmony, contrast, and depth.</p><div class="sample-swatches" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><p class="muted">Your scan opens a fitting room with your palette and recommended clothing. Try-on stays off until you click Try.</p></div>
+<div id="results" hidden><h2 id="profile-title"></h2><p id="profile-summary"></p><div id="features" class="features"></div><h3>Your highest-scoring colors</h3><p class="muted">Styling scores out of 100</p><div id="palette" class="palette"></div><details><summary>Scan quality & scoring details</summary><ul id="warnings"></ul><p id="method"></p></details></div></section></div>
+<section id="clothing-section" hidden><div class="section-heading"><div><p class="eyebrow">03 / PUT YOUR PALETTE TO WORK</p><h2>Colors you can wear.</h2></div><label>Show <select id="category"><option>All clothing</option><option>Tops</option><option>Layers</option><option>Bottoms</option></select></label></div><p id="catalog-note" class="muted"></p><div id="clothing" class="clothing"></div></section>
+<footer><span>YOUR COLORS. YOUR CHOICE.</span><span>Color-based styling guidance · all colors are yours to wear</span></footer>
+</main></body></html>

@@ -19,7 +19,7 @@ from .utils.visualization import save_debug
 DEFAULT_MODELS = Path(__file__).resolve().parents[1] / 'models'
 
 
-def load_image(path: Path) -> np.ndarray:
+def load_image(path: Path | BytesIO) -> np.ndarray:
     """Honor EXIF orientation and embedded ICC profiles; return bounded sRGB."""
     with Image.open(path) as source:
         image = ImageOps.exif_transpose(source)

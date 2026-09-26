@@ -1,5 +1,11 @@
 # Single-photo color extraction — Phases 1–3
 
+## Web face scan
+
+Run `.venv/bin/python -m backend.app.api --port 5173` from the repository root,
+then open http://localhost:5173 to capture or upload a portrait, view palette scores,
+and explore clothing ideas ranked by color. See [web setup](../web/README.md).
+
 Phases 4–7 are now available through `python test_profile.py photo1.jpg [photo2.jpg photo3.jpg]`. See [PROFILE.md](PROFILE.md) for multi-photo aggregation, facial characteristics, seasonal affinities, clothing-color ranking, and callable interfaces. The single-photo extraction CLI below remains available.
 
 ## 1. Required packages

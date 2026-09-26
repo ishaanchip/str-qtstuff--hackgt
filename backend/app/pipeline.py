@@ -1,5 +1,6 @@
 """Callable Phase 4–7 pipeline wrapping the unchanged single-photo extractor."""
 from pathlib import Path
+from io import BytesIO
 from collections.abc import Sequence
 import hashlib
 import numpy as np
@@ -13,10 +14,10 @@ from .recommendation.color_ranker import rank_colors, group_colors
 from .utils.visualization import save_debug
 
 
-def analyze_photos(image_paths: Sequence[str | Path], model_dir: Path = DEFAULT_MODELS,
+def analyze_photos(image_paths: Sequence[str | Path | BytesIO], model_dir: Path = DEFAULT_MODELS,
                    *, candidate_colors: list[dict] | None = None,
                    debug_dir: Path | None = None) -> dict:
-    """Return JSON-ready per-photo measurements, profile, seasons and ranking.
+    """Analyze photo paths or in-memory uploads and return JSON-ready rankings.
 
     Photos must depict the same person; identity is not inferred or verified.
     Recoverable per-photo errors are reported, and remaining photos are usable.
@@ -31,8 +32,8 @@ def analyze_photos(image_paths: Sequence[str | Path], model_dir: Path = DEFAULT_
     photos, warnings, seen = [], [], set()
     analyzed = 0
     for index, path in enumerate(image_paths, 1):
-        path = Path(path)
-        record = {'photo': index, 'source': str(path), 'status': 'error'}
+        path = path if isinstance(path, BytesIO) else Path(path)
+        record = {'photo': index, 'source': 'uploaded portrait' if isinstance(path, BytesIO) else str(path), 'status': 'error'}
         try:
             rgb = load_image(path)
             # Exact duplicate files cannot provide independent corroboration.
