@@ -13,3 +13,7 @@ web/dist/
 !.env.example
 web/test-results/
 web/playwright-report/
+.pytest_cache/
+backend/models/*
+debug-output/
+*.egg-info/
