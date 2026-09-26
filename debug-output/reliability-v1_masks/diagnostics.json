@@ -1,0 +1,111 @@
+{
+  "skin": {
+    "confidence": 0.9105539114723873,
+    "rgb": [
+      228,
+      171,
+      144
+    ],
+    "lab": [
+      74.6337890625,
+      17.34375,
+      22.328125
+    ],
+    "warnings": [],
+    "valid_pixels": 1589,
+    "region_delta_e": {
+      "forehead/right_cheek": 7.2808661460876465,
+      "forehead/left_cheek": 7.43816614151001,
+      "right_cheek/left_cheek": 7.386047840118408
+    },
+    "region_valid_pixels": {
+      "forehead": 946,
+      "right_cheek": 321,
+      "left_cheek": 322
+    },
+    "coverage_score": 0.9938679633534041,
+    "consistency_score": 0.7855973539454503,
+    "lighting_score": 0.9938389227642277
+  },
+  "hair": {
+    "confidence": 0.6959650191289335,
+    "rgb": [
+      112,
+      106,
+      102
+    ],
+    "lab": [
+      45.17822265625,
+      1.703125,
+      3.140625
+    ],
+    "warnings": [],
+    "valid_pixels": 2929,
+    "candidate_pixels": 7360,
+    "dominant_cluster_ratio": 0.4008152173913043,
+    "skin_separation": 38.47622299194336,
+    "region_delta_e": {
+      "hair_upper_center/hair_upper_left": 18.146209716796875,
+      "hair_upper_center/hair_upper_right": 9.681705474853516,
+      "hair_upper_left/hair_upper_right": 9.800044059753418
+    },
+    "region_valid_pixels": {
+      "hair_upper_center": 1646,
+      "hair_upper_left": 850,
+      "hair_upper_right": 988
+    },
+    "coverage_score": 0.9928813559322034,
+    "consistency_score": 0.2929802635358671,
+    "separation_score": 0.9081018567085266,
+    "segmentation_score": 0.9081018567085266
+  },
+  "eyes": {
+    "confidence": 0.8240869808298547,
+    "rgb": [
+      50,
+      39,
+      39
+    ],
+    "lab": [
+      16.806555006819057,
+      5.592075330711444,
+      1.9507599468818606
+    ],
+    "warnings": [],
+    "left_valid_pixels": 59,
+    "right_valid_pixels": 73,
+    "left_right_delta_e": 8.207810401916504,
+    "highlight_percentage": 3.6496350364963503,
+    "selected_eyes": [
+      "right_iris",
+      "left_iris"
+    ],
+    "coverage_score": 0.9614972114972116,
+    "agreement_score": 0.7412524621301618,
+    "quality_score": 0.7149355568945264,
+    "per_eye": {
+      "right_iris": {
+        "valid_pixels": 73,
+        "radius": 8.003746032714844,
+        "candidate_pixels": 74,
+        "highlight_pixels": 1,
+        "highlight_percentage": 1.3513513513513513,
+        "coverage_score": 0.9864864864864865,
+        "landmark_quality": 0.812263905395942,
+        "quality_score": 0.7963505727830354,
+        "local_reliability": 0.7855890785562377
+      },
+      "left_iris": {
+        "valid_pixels": 59,
+        "radius": 7.9314866065979,
+        "candidate_pixels": 63,
+        "highlight_pixels": 4,
+        "highlight_percentage": 6.349206349206349,
+        "coverage_score": 0.9365079365079365,
+        "landmark_quality": 0.6806647140337946,
+        "quality_score": 0.6335205410060172,
+        "local_reliability": 0.5932970145929367
+      }
+    }
+  }
+}
