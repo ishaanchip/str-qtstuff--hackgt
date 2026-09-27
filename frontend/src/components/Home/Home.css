@@ -1,0 +1,47 @@
+.home {
+  position: relative;
+}
+
+.home__stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 7rem);
+  overflow: hidden;
+}
+
+.home__camera {
+  position: relative;
+  z-index: 2;
+}
+
+.home__float {
+  position: absolute;
+  z-index: 1;
+  color: #1a1a1a;
+  font-family: 'Permanent Marker', cursive;
+  font-size: clamp(0.65rem, 1.35vw, 1.1rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+}
+
+.home__float--1 { top: 22%; left: calc(50% - 340px); transform: rotate(-28deg); }
+.home__float--2 { top: 38%; left: calc(50% - 320px); transform: rotate(-18deg); }
+.home__float--3 { top: 54%; left: calc(50% - 350px); transform: rotate(-26deg); }
+.home__float--4 { top: 70%; left: calc(50% - 325px); transform: rotate(-16deg); }
+.home__float--5 { top: 24%; right: calc(50% - 335px); transform: rotate(24deg); }
+.home__float--6 { top: 40%; right: calc(50% - 315px); transform: rotate(18deg); }
+.home__float--7 { top: 56%; right: calc(50% - 345px); transform: rotate(28deg); }
+.home__float--8 { top: 72%; right: calc(50% - 320px); transform: rotate(16deg); }
+.home__float--9 { top: 6%; left: calc(50% - 220px); transform: rotate(-14deg); }
+.home__float--10 { top: 4%; left: 50%; transform: translateX(-50%) rotate(-3deg); }
+.home__float--11 { top: 6%; right: calc(50% - 210px); transform: rotate(12deg); }
+.home__float--12 { top: 12%; left: calc(50% - 160px); transform: rotate(-10deg); }
+.home__float--13 { top: 11%; right: calc(50% - 155px); transform: rotate(11deg); }
+.home__float--14 { bottom: 10%; left: calc(50% - 200px); transform: rotate(-12deg); }
+.home__float--15 { bottom: 9%; right: calc(50% - 195px); transform: rotate(12deg); }
+.home__float--16 { bottom: 16%; left: 50%; transform: translateX(-50%) rotate(3deg); }
