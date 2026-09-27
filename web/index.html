@@ -1,58 +1,18 @@
 <!doctype html>
 <html lang="en">
-<<<<<<< HEAD
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#152c24" />
-  <title>Fitting Room · Lucy</title>
-</head>
-<body>
-  <main>
-    <header><a class="brand" href="/">FR<span>FITTING ROOM</span></a><span class="tag">POWERED BY LUCY 2.5</span></header>
-    <section class="intro"><div><p class="eyebrow">YOUR CAMERA. A NEW LOOK.</p><h1>Try it on.<br><em>See it move.</em></h1></div><p class="intro-copy">Build an outfit, step into frame, and see your next look come to life.</p></section>
-    <div id="setup" class="notice" hidden>Add your Decart API key to <code>web/.env.local</code> as <code>DECART_API_KEY</code>, then restart the server.</div>
-    <div class="workspace">
-      <aside class="controls">
-        <p class="eyebrow">01 / BUILD YOUR OUTFIT</p>
-        <p class="outfit-help">Add any combination. All selected items are worn together.</p>
-        <div id="outfit-slots"></div>
-        <p id="filename" class="file-note" role="status">No items selected.</p>
-        <details id="reference-details" hidden><summary>View outfit reference</summary><img id="outfit-reference" alt="Combined reference board for the selected outfit" /></details>
-        <label class="field-label" for="prompt">02 / FINISHING TOUCHES</label>
-        <textarea id="prompt" rows="3" maxlength="2000" placeholder="Optional: tuck in the shirt, wear the bag over one shoulder…"></textarea>
-        <label class="checkbox"><input id="enhance" type="checkbox" checked /> Enhance instructions with Lucy</label>
-        <button id="start" class="primary" disabled>Start try-on <span>↗</span></button>
-        <div class="button-row"><button id="apply" disabled>Apply outfit</button><button id="stop" disabled>Stop camera</button></div>
-        <p class="privacy">Starting sends your camera video and selected item images to Decart. No microphone. API usage applies; each session ends after five minutes.</p>
-      </aside>
-      <section class="stage" aria-label="Live try-on preview">
-        <div class="stage-heading"><h2>Your fitting room</h2><span id="status" role="status">Ready when you are</span></div>
-        <div class="output-wrap"><video id="video-output" autoplay playsinline muted aria-label="Lucy try-on output"></video><div id="output-empty" class="empty"><svg class="shirt-symbol" width="70" height="70" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M23 12c1 8 17 8 18 0l15 9-7 12-7-4v25H22V29l-7 4-7-12 15-9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><h3>A new look starts here.</h3><p>Add your outfit and start your camera.<br>Keep your full body in frame for jeans.</p></div><span class="video-label">LUCY TRY-ON</span></div>
-        <div class="stage-bottom"><div class="camera-wrap"><video id="video-input" autoplay playsinline muted aria-label="Original camera preview"></video><span class="video-label">ORIGINAL</span></div><p>Move naturally.<br><span>Good light and a clear view of the selected clothing areas give the best results.</span></p></div>
-      </section>
-    </div>
-    <p id="error" role="alert" hidden></p>
-    <footer><span>LIVE VIDEO TRY-ON</span><span>AI-generated preview · appearance and fit may vary</span></footer>
-  </main>
-  <script type="module" src="/src/main.js"></script>
-</body>
-</html>
-=======
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Fitting Room · Your palette</title><link rel="stylesheet" href="/scan.css"><script type="module" src="/scan.js"></script></head>
 <body><main>
-<header><a href="/" class="brand">FR <span>FITTING ROOM</span></a><span class="tag">PERSONAL COLOR STUDIO</span></header>
-<section class="intro"><div><p class="eyebrow">A LITTLE SCIENCE. A LOT OF YOU.</p><h1>Find your colors.<br><em>Make them yours.</em></h1></div><p>One portrait. A palette inspired by your natural coloring. Clothing ideas to bring it to life.</p></section>
+<header><a href="/" class="brand">FR <span>FITTING ROOM</span></a><span class="tag">YOUR PERSONAL COLOR STUDIO</span></header>
+<section class="intro"><div><p class="eyebrow">COLOR, WITH A PERSONAL TOUCH.</p><h1>Good colors.<br><em>Great on you.</em></h1></div><p>One portrait. A palette inspired by your natural coloring. Clothing ideas to bring it to life.</p></section>
 <div class="workspace">
 <section class="capture panel"><p class="eyebrow">01 / YOUR FACE SCAN</p><h2>Start with good light.</h2><p>Face forward in soft daylight. Keep your face, hair, and eyes visible, with only you in the frame.</p>
-<div class="viewfinder"><video id="camera" autoplay muted playsinline hidden></video><img id="preview" alt="Portrait selected for color analysis" hidden><div id="placeholder"><span class="face-icon">◯</span><strong>Your palette starts here</strong><p>Take a photo or upload a portrait</p></div></div>
+<div class="viewfinder"><video id="camera" autoplay muted playsinline hidden></video><img id="preview" alt="Portrait selected for color analysis" hidden><div id="placeholder"><span class="face-icon" aria-hidden="true"><svg viewBox="0 0 100 120" fill="none"><path d="M25 42C25 5 75 5 75 42V58C75 91 25 91 25 58Z M12 114C14 80 86 80 88 114" stroke="currentColor" stroke-width="1.5"/><path d="M4 26V5H25M75 5H96V26M4 94V115H25M75 115H96V94" stroke="currentColor" stroke-width="1.5"/></svg></span><strong>Your palette starts here</strong><p>Take a photo or upload a portrait</p></div></div>
 <div class="actions"><button id="open-camera">Use camera</button><label class="upload" for="photo">Upload photo</label><input type="file" id="photo" accept="image/jpeg,image/png" hidden></div>
 <div class="actions" id="camera-actions" hidden><button id="capture">Capture photo</button><button id="close-camera">Close camera</button></div>
 <button class="primary" id="analyze" disabled>Find my looks <span>↗</span></button><p id="status" role="status" aria-live="polite">JPEG or PNG · up to 10 MB</p><p id="error" role="alert" hidden></p>
 <p class="privacy">Your camera opens only when you choose. Analysis runs locally on this computer; portraits are processed in memory and aren't saved.</p></section>
-<section class="results panel" aria-label="Analysis results"><p class="eyebrow">02 / YOUR COLOR STORY</p><div id="results-empty"><h2>A palette that starts with you.</h2><p>Your skin, hair, and eye colors help us score clothing colors for harmony, contrast, and depth.</p><div class="sample-swatches" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><p class="muted">Your scan opens a fitting room with your palette and recommended clothing. Try-on stays off until you click Try.</p></div>
+<section class="results panel" aria-label="Analysis results"><p class="eyebrow">02 / YOUR COLOR STORY</p><div id="results-empty"><h2>A palette that starts with you.</h2><p>Your skin, hair, and eye colors help us score clothing colors for harmony, contrast, and depth.</p><div class="palette-preview" aria-label="Illustrative palette: wine, teal, sage, peach and cream"><div class="preview-caption">THE ART OF FINDING YOUR COLORS <span>№ 01</span></div><div class="sample-swatches" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><div class="preview-labels"><span>WINE</span><span>TEAL</span><span>SAGE</span><span>PEACH</span><span>CREAM</span></div><p>A little harmony. A little contrast.<br>A whole lot of possibility.</p></div><div class="journey"><span><b>01</b> Capture</span><span><b>02</b> Discover</span><span><b>03</b> Try it on</span></div><p class="muted">Your scan opens a fitting room with your palette and recommended clothing. Try-on stays off until you click Try.</p></div>
 <div id="results" hidden><h2 id="profile-title"></h2><p id="profile-summary"></p><div id="features" class="features"></div><h3>Your highest-scoring colors</h3><p class="muted">Styling scores out of 100</p><div id="palette" class="palette"></div><details><summary>Scan quality & scoring details</summary><ul id="warnings"></ul><p id="method"></p></details></div></section></div>
 <section id="clothing-section" hidden><div class="section-heading"><div><p class="eyebrow">03 / PUT YOUR PALETTE TO WORK</p><h2>Colors you can wear.</h2></div><label>Show <select id="category"><option>All clothing</option><option>Tops</option><option>Layers</option><option>Bottoms</option></select></label></div><p id="catalog-note" class="muted"></p><div id="clothing" class="clothing"></div></section>
 <footer><span>YOUR COLORS. YOUR CHOICE.</span><span>Color-based styling guidance · all colors are yours to wear</span></footer>
 </main></body></html>
->>>>>>> Vrishin

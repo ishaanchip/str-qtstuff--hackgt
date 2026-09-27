@@ -3,3 +3,4 @@ opencv-contrib-python>=4.10,<5
 mediapipe>=0.10.21,<0.11
 Pillow>=10.4,<13
 certifi>=2024.8.30
+channel3-sdk==4.1.0

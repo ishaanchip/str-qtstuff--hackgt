@@ -1,0 +1,22 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({headless:true});try{
+ const page=await browser.newPage({viewport:{width:390,height:844}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://localhost:5173');
+ await page.evaluate(()=>sessionStorage.setItem('fitting-room-scan',JSON.stringify({recommended_colors:[{name:'Teal',hex:'#008080',score:90},{name:'Wine',hex:'#722F37',score:80}]})));
+ const requests=[];
+ await page.route('**/api/clothing/search',route=>{const payload=route.request().postDataJSON();requests.push(payload);return route.fulfill({json:{products:[{id:'shirt',name:'Real shirt',category:'Tops',store:'nike.com',url:'https://nike.com/product',palette_name:payload.colors[0].name,palette_hex:payload.colors[0].hex,reference_image:'/api/clothing/image/test'}]}})});
+ await page.goto('http://localhost:5173/try-on');await page.locator('.shop-card').waitFor();
+ assert.equal(await page.locator('#clothing').count(),0);assert.equal(await page.getByText('Made for your palette.').count(),0);
+ assert.equal(requests[0].category,'All');assert.equal(await page.locator('#try').isDisabled(),true);
+ await page.getByRole('button',{name:'Select product Real shirt'}).click();
+ await page.locator('#occasion').fill('Wedding');
+ await page.getByRole('button',{name:'Find clothes in Wine',exact:true}).click();await page.locator('.shop-card').waitFor();
+ assert.deepEqual(requests.at(-1).colors,[{name:'Wine',hex:'#722F37',score:80}]);assert.equal(requests.at(-1).occasion,'Wedding');
+ assert.equal(await page.getByRole('button',{name:'Find clothes in Wine',exact:true}).getAttribute('aria-pressed'),'true');
+ await page.selectOption('#shop-category','Bottoms');await page.locator('.shop-card').waitFor();assert.equal(requests.at(-1).colors[0].hex,'#722F37');
+ assert.match(await page.locator('#outfit').innerText(),/Real shirt/);
+ await page.locator('#all-colors').click();await page.locator('.shop-card').waitFor();assert.equal(requests.at(-1).colors.length,2);
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);
+ await page.screenshot({path:'/tmp/palette-filter-mobile.png',fullPage:true});console.log('PASS: removed demo section, All category, palette-only scan, color search, occasion/category combination, reset, preserved outfit and mobile');
+}finally{await browser.close()}})().catch(e=>{console.error(e);process.exit(1)});

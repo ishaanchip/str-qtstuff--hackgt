@@ -13,10 +13,15 @@ from urllib.error import HTTPError, URLError
 
 from .main import DEFAULT_MODELS
 from .pipeline import analyze_photos
+from clothes_scraping.clothes_scraper import getClothesInfo, validate_palette, validate_occasion, CATEGORIES, ScraperError
+from .product_images import register_images, get_image
+from time import monotonic
 
 WEB_ROOT = Path(__file__).resolve().parents[2] / 'web'
 MAX_UPLOAD = 10 * 1024 * 1024
 ANALYSIS_LOCK = BoundedSemaphore(1)
+SHOP_LOCK = BoundedSemaphore(1)
+SHOP_CACHE = {}
 
 
 def decart_ssl_context():
@@ -118,6 +123,19 @@ class Handler(SimpleHTTPRequestHandler):
             return self.json_response(200, {'models_ready': ready})
         # Serve only the new page's public files, never .env.local or node_modules.
         path = self.path.split('?')[0]
+        if path.startswith('/api/clothing/image/'):
+            try:
+                image = get_image(path.rsplit('/', 1)[-1])
+            except (ValueError, OSError):
+                return self.json_response(422, {'error': 'Product photo unavailable. Try another item or search again.'})
+            self.send_response(200)
+            self.send_header('Content-Type', 'image/png')
+            self.send_header('Content-Length', str(len(image)))
+            self.send_header('Cache-Control', 'private, max-age=600')
+            self.send_header('X-Content-Type-Options', 'nosniff')
+            self.end_headers()
+            self.wfile.write(image)
+            return
         if path == '/try-on':
             self.path = '/try-on.html'
             return super().do_GET()
@@ -133,6 +151,47 @@ class Handler(SimpleHTTPRequestHandler):
         return self.json_response(405, {'error': 'Method not allowed'})
 
     def do_POST(self):
+        if self.path == '/api/clothing/search':
+            allowed = {f'http://localhost:{self.server.server_port}', f'http://127.0.0.1:{self.server.server_port}'}
+            if self.headers.get('Origin') not in allowed:
+                return self.json_response(403, {'error': 'Use the local fitting room to search clothes.'})
+            if self.headers.get('Content-Type', '').split(';')[0] != 'application/json':
+                return self.json_response(415, {'error': 'Send a JSON palette.'})
+            try:
+                length = int(self.headers.get('Content-Length', '0'))
+                if not 0 < length <= 20000:
+                    return self.json_response(413, {'error': 'Palette request is too large or empty.'})
+                self.connection.settimeout(10)
+                payload = json.loads(self.rfile.read(length))
+                if not isinstance(payload, dict):
+                    raise ValueError('Send a palette object.')
+                colors = validate_palette(payload.get('colors'))
+                occasion = validate_occasion(payload.get('occasion', ''))
+                category = payload.get('category', 'Tops')
+                if not isinstance(category, str) or category not in CATEGORIES:
+                    raise ValueError('Choose a valid clothing category.')
+            except (ValueError, OSError):
+                return self.json_response(400, {'error': 'Invalid palette. Send HEX colors, scores from 0–100, and a valid clothing category.'})
+            if not SHOP_LOCK.acquire(blocking=False):
+                return self.json_response(429, {'error': 'A clothing search is running. Please retry shortly.'})
+            try:
+                key = (category, occasion, json.dumps(colors, sort_keys=True))
+                cached = SHOP_CACHE.get(key)
+                if cached and monotonic() - cached[0] < 600:
+                    return self.json_response(200, cached[1])
+                result = getClothesInfo(colors, category=category, occasion=occasion)
+                register_images(result['products'])
+                if not result.get('partial'):
+                    if len(SHOP_CACHE) >= 32:
+                        SHOP_CACHE.pop(next(iter(SHOP_CACHE)))
+                    SHOP_CACHE[key] = (monotonic(), result)
+                return self.json_response(200, result)
+            except ScraperError as error:
+                return self.json_response(503, {'error': str(error)})
+            except Exception:
+                return self.json_response(502, {'error': 'Clothing search failed. Please retry.'})
+            finally:
+                SHOP_LOCK.release()
         if self.path == '/api/try-on/token':
             expected = f'http://localhost:{self.server.server_port}'
             allowed = {expected, f'http://127.0.0.1:{self.server.server_port}'}

@@ -19,13 +19,17 @@ const baseURL = process.env.TEST_BASE_URL || 'http://localhost:5173';
       return route.fulfill({contentType: 'application/javascript', body: `export async function connectTryOn({stream, items, onRemoteStream}) { window.testOutfit = items; onRemoteStream(stream); return {disconnect() {}}; }`});
     });
     await page.route('**/api/analyze', route => route.fulfill({json: {
-      profile: {season: 'Autumn'}, recommended_colors: [], clothing: [
+      profile: {season: 'Autumn'}, recommended_colors: [{name:'Teal',hex:'#008080',score:90}], clothing: [
         {id: 1, name: 'Linen shirt', category: 'Tops', color: 'Ivory', hex: '#FFFFF0', score: 90},
         {id: 2, name: 'Trousers', category: 'Bottoms', color: 'Navy', hex: '#000080', score: 80},
         {id: 3, name: 'Woven scarf', category: 'Accessories', color: 'Sage', hex: '#9CAF88', score: 75},
         {id: 4, name: 'Baseball cap', category: 'Accessories', color: 'Navy', hex: '#000080', score: 70},
       ],
     }}));
+    await page.route('**/api/clothing/search', route => route.fulfill({json:{products:[
+      {id:1,name:'Linen shirt',category:'Tops'}, {id:2,name:'Trousers',category:'Bottoms'},
+      {id:3,name:'Woven scarf',category:'Accessories'}, {id:4,name:'Baseball cap',category:'Accessories'}
+    ].map(item=>({...item,store:'nike.com',url:'https://nike.com/product',palette_hex:'#008080',palette_name:'Teal',reference_image:'/api/clothing/image/test'}))}}));
     await page.goto(`${baseURL}/try-on`);
     await page.locator('#no-scan').waitFor({state: 'visible'});
     await page.goto(baseURL);
@@ -33,11 +37,12 @@ const baseURL = process.env.TEST_BASE_URL || 'http://localhost:5173';
     await page.locator('#analyze').click();
     await page.waitForURL('**/try-on');
     await page.locator('#fitting-room').waitFor({state: 'visible'});
+    await page.getByRole('button', {name:'Select product Linen shirt'}).click();
     assert.equal(await page.locator('.garment-card').count(), 4);
-    await page.selectOption('#category', 'Bottoms');
-    await page.getByRole('button', {name: 'Select Navy Trousers'}).click();
-    await page.selectOption('#category', 'Accessories');
-    await page.getByRole('button', {name: 'Select Sage Woven scarf'}).click();
+    await page.selectOption('#shop-category', 'Bottoms');
+    await page.getByRole('button', {name: 'Select product Trousers'}).click();
+    await page.selectOption('#shop-category', 'Accessories');
+    await page.getByRole('button', {name: 'Select product Woven scarf'}).click();
     assert.equal(await page.locator('#outfit .remove-item').count(), 3);
     assert.match(await page.locator('[data-slot=shirt]').innerText(), /Linen shirt/);
     assert.match(await page.locator('[data-slot=pants]').innerText(), /Trousers/);
@@ -47,8 +52,8 @@ const baseURL = process.env.TEST_BASE_URL || 'http://localhost:5173';
     await page.waitForFunction(() => document.getElementById('session-badge').textContent === 'LIVE TRY-ON');
     assert.equal(tokens, 1); assert.equal(sdkLoads, 1);
     await page.evaluate(() => { window.testTracks = document.getElementById('input').srcObject.getTracks(); });
-    assert.deepEqual(await page.evaluate(() => window.testOutfit.map(item => item.id)), [1, 2, 3]);
-    await page.getByRole('button', {name: 'Select Navy Baseball cap'}).click();
+    assert.deepEqual(await page.evaluate(() => window.testOutfit.map(item => item.id)), ['shop:1', 'shop:2', 'shop:3']);
+    await page.getByRole('button', {name: 'Select product Baseball cap'}).click();
     assert.equal(await page.locator('#session-badge').innerText(), 'PREVIEW OFF');
     assert.equal(tokens, 1);
     assert.match(await page.locator('[data-slot=accessory]').innerText(), /Baseball cap/);
@@ -56,14 +61,14 @@ const baseURL = process.env.TEST_BASE_URL || 'http://localhost:5173';
     assert.equal(await page.locator('#input').evaluate(video => video.srcObject), null);
     await page.locator('#try').click();
     await page.waitForFunction(() => document.getElementById('session-badge').textContent === 'LIVE TRY-ON');
-    assert.deepEqual(await page.evaluate(() => window.testOutfit.map(item => item.id)), [1, 2, 4]);
+    assert.deepEqual(await page.evaluate(() => window.testOutfit.map(item => item.id)), ['shop:1', 'shop:2', 'shop:4']);
     await page.locator('#stop').click();
     for (const label of ['Shirt / layer', 'Pants', 'Accessory']) await page.getByRole('button', {name: `Remove ${label}`, exact: true}).click();
     assert(await page.locator('#try').isDisabled());
     await page.reload();
     await page.locator('#fitting-room').waitFor({state: 'visible'});
     assert.equal(tokens, 2); assert.equal(sdkLoads, 1);
-    await page.selectOption('#category', 'All clothing');
+    await page.selectOption('#shop-category', 'All');
     await page.screenshot({path: '/tmp/outfit-desktop.png', fullPage: true});
     await page.setViewportSize({width: 390, height: 844});
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
