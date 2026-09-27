@@ -35,6 +35,7 @@ async function getClothesInfo(colors, amountOfClothes, gender, category) {
   const client = getClient();
   const results = await client.products.search({
     query,
+    limit: amountOfClothes,
     config: { mode: "agentic" },
   });
 
@@ -84,7 +85,7 @@ router.post("/clothes-search", async (req, res) => {
     const colors = Array.isArray(req.body.colors)
       ? req.body.colors.filter((color) => typeof color === "string" && color.trim())
       : [];
-    const amountOfClothes = Math.min(Number(req.body.amountOfClothes) || 3, 6);
+    const amountOfClothes = Math.max(1, Math.min(Math.floor(Number(req.body.amountOfClothes)) || 10, 10));
     const gender = req.body.gender === "female" ? "female" : "male";
 
     if (!colors.length) {
@@ -97,20 +98,19 @@ router.post("/clothes-search", async (req, res) => {
       });
     }
 
-    const [tops, bottoms, accessories] = await Promise.all([
-      getClothesInfo(colors, amountOfClothes, gender, "tops").catch((err) => {
-        console.log(`clothes search failed [tops]: ${err.message}`);
-        return [];
-      }),
-      getClothesInfo(colors, amountOfClothes, gender, "bottoms").catch((err) => {
-        console.log(`clothes search failed [bottoms]: ${err.message}`);
-        return [];
-      }),
-      getClothesInfo(colors, amountOfClothes, gender, "accessories").catch((err) => {
-        console.log(`clothes search failed [accessories]: ${err.message}`);
-        return [];
-      }),
-    ]);
+    const results = await Promise.allSettled(
+      ["tops", "bottoms", "accessories"].map((category) =>
+        getClothesInfo(colors, amountOfClothes, gender, category)
+      )
+    );
+    if (results.every((result) => result.status === "rejected")) {
+      return res.status(502).json({
+        error: "Clothes search is temporarily unavailable. Please try again.",
+      });
+    }
+    const [tops, bottoms, accessories] = results.map((result) =>
+      result.status === "fulfilled" ? result.value : []
+    );
 
     return res.status(200).json({ tops, bottoms, accessories });
   } catch (err) {

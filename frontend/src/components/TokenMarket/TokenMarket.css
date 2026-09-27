@@ -1,145 +1,60 @@
 .token-market {
+  max-width: 1440px;
   min-height: calc(100vh - 7rem);
-  padding: 2rem 1.5rem 3rem;
+  margin: auto;
+  padding: 2rem 2rem 3rem;
+  font-family: var(--font-sans);
 }
-
+.token-market__intro { margin-bottom: 2rem; }
 .token-market__title {
-  margin: 0 0 1.75rem;
-  font-family: "Permanent Marker", cursive;
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
-  font-weight: 400;
-  text-align: center;
-  letter-spacing: 0.04em;
+  margin: 0 0 .65rem;
+  color: var(--ink);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -.055em;
 }
-
+.token-market__lead { color: var(--muted); font-size: .95rem; }
 .token-market__status {
-  margin: -0.75rem 0 1.25rem;
-  color: #15803d;
-  font-family: Kalam, "Permanent Marker", cursive;
-  font-size: 1rem;
-  text-align: center;
+  margin: 0 0 1.25rem;
+  padding: .85rem 1rem;
+  border: 1px solid #cedfce;
+  border-radius: 12px;
+  background: #f1f7f1;
+  color: #32603b;
+  font-size: .9rem;
 }
-
-.token-market__status--error {
-  color: #b91c1c;
-}
-
-.token-market__grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1.25rem;
-  max-width: 68rem;
-  margin: 0 auto;
-}
-
+.token-market__status--error { background: #fff4f3; border-color: #ead0cf; color: #9c3347; }
+.token-market__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; }
 .token-pack {
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  background: #fff;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  min-width: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: white;
 }
-
 .token-pack__bonus {
   position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1;
-  margin: 0;
-  padding: 0.2rem 0.45rem;
-  background: #ef4444;
-  color: #fff;
-  font-family: "Permanent Marker", cursive;
-  font-size: 0.62rem;
-  letter-spacing: 0.03em;
+  top: 1rem;
+  right: 1rem;
+  padding: .3rem .65rem;
+  border-radius: 100px;
+  background: #f2ecef;
+  color: var(--plum);
+  font-size: .72rem;
+  font-weight: 650;
 }
-
-.token-pack__body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 16rem;
-  padding: 2.4rem 1rem 1.4rem;
-}
-
-.token-pack__coins {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-  margin-bottom: 1.1rem;
-  color: #9ca3af;
-}
-
-.token-pack__icon {
-  font-size: 2.4rem;
-}
-
-.token-pack__coins--starter .token-pack__icon {
-  font-size: 3.2rem;
-}
-
-.token-pack__coins--plus .token-pack__icon {
-  font-size: 2.6rem;
-}
-
-.token-pack__coins--pro .token-pack__icon {
-  font-size: 2.35rem;
-}
-
-.token-pack__coins--mega .token-pack__icon {
-  font-size: 2.1rem;
-}
-
-.token-pack__amount {
-  margin: 0;
-  font-family: "Permanent Marker", cursive;
-  font-size: 1.55rem;
-  font-weight: 400;
-  line-height: 1;
-}
-
-.token-pack__label {
-  margin: 0.2rem 0 0;
-  color: #6b7280;
-  font-family: Kalam, cursive;
-  font-size: 1rem;
-}
-
-.token-pack__price {
-  width: 100%;
-  padding: 0.7rem 0.6rem;
-  border: none;
-  background: #facc15;
-  font-family: "Permanent Marker", cursive;
-  font-size: 1.05rem;
-  cursor: pointer;
-}
-
-.token-pack__price:hover:not(:disabled) {
-  background: #eab308;
-}
-
-.token-pack__price:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-@media (max-width: 900px) {
-  .token-market__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 560px) {
-  .token-market__grid {
-    grid-template-columns: 1fr;
-    max-width: 20rem;
-  }
-}
+.token-pack__body { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; min-height: 16rem; padding: 2.5rem .5rem 1.5rem; }
+.token-pack__coins { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .4rem; min-height: 70px; margin-bottom: 1.25rem; color: #a58a70; }
+.token-pack__icon { font-size: 2rem; }
+.token-pack__coins--starter .token-pack__icon { font-size: 3rem; }
+.token-pack__amount { color: var(--ink); font-size: 2rem; font-weight: 700; line-height: 1.15; letter-spacing: -.04em; }
+.token-pack__label { margin-top: .35rem; color: var(--muted); font-size: .9rem; }
+.token-pack__price { width: 100%; padding: .85rem; border: 0; border-radius: 12px; background: #806247; color: white; font-family: inherit; font-size: .9rem; font-weight: 600; cursor: pointer; transition: background .15s; }
+.token-pack__price:hover:not(:disabled) { background: #684d36; }
+.token-pack__price:disabled { opacity: .6; cursor: not-allowed; }
+@media (max-width: 900px) { .token-market__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .token-market { padding: 1.5rem 1rem 2rem; } .token-market__grid { grid-template-columns: 1fr; } .token-pack__body { min-height: 12rem; } }

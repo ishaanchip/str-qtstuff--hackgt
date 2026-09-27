@@ -25,7 +25,7 @@
 
 .header-nav a {
   color: inherit;
-  font-family: "Permanent Marker", cursive;
+  font-family: var(--font-sans);
   font-size: 1.15rem;
   font-weight: 400;
   text-decoration: none;
@@ -47,7 +47,7 @@
   border-radius: 999px;
   background: #fff;
   color: inherit;
-  font-family: "Permanent Marker", cursive;
+  font-family: var(--font-sans);
   font-size: 0.95rem;
   cursor: pointer;
 }
@@ -113,7 +113,7 @@
 .header-menu__tokens {
   margin: 4px 0 0;
   color: #3f3f46;
-  font-family: Kalam, "Permanent Marker", cursive;
+  font-family: var(--font-sans);
   font-size: 0.9rem;
 }
 
@@ -137,4 +137,32 @@
   background: #fff;
   border-radius: 16px;
   overflow: visible;
+}
+
+/* Shared studio navigation. */
+.header { max-width: 1440px; margin: auto; padding: 1rem 2rem; gap: 1rem; border-bottom: 1px solid var(--line); }
+.header-nav { gap: .25rem; padding: .25rem; border: 1px solid var(--line); border-radius: 100px; background: #f0eae5; }
+.header-nav a { display: flex; align-items: center; justify-content: center; min-height: 38px; padding: .5rem 1.15rem; border-radius: 100px; font-size: .85rem; font-weight: 600; color: var(--muted); transition: background .15s, color .15s; white-space: nowrap; }
+.header-nav a:hover { color: var(--ink); background: #ffffff80; }
+.header-nav a.active { color: #684d36; background: white; text-decoration: none; box-shadow: 0 2px 6px #24242408; }
+.header__account { display: flex; align-items: center; gap: .65rem; padding: .35rem .8rem .35rem .35rem; border-color: var(--line); font-size: .85rem; font-weight: 600; min-height: 44px; }
+.header__account:hover, .header__account[aria-expanded="true"] { border-color: #bea993; background: #fcfaf7; }
+.header__initial { display: grid; place-items: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #eee4da; color: #684d36; font-size: .8rem; }
+.header__account-name { max-width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header__chevron { color: var(--muted); transition: transform .15s; }
+.header__chevron--open { transform: rotate(180deg); }
+.header-menu { width: min(300px, calc(100vw - 32px)); background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 16px 50px #24242412; }
+.header-menu__avatar { flex-shrink: 0; background: #eee4da; color: #684d36; }
+.header-menu__profile { border-bottom: 1px solid var(--line); margin-bottom: .25rem; }
+.header-menu__profile > div:last-child { min-width: 0; }
+.header-menu__email { overflow-wrap: anywhere; font-size: .75rem; }
+.header-menu__tokens { color: var(--muted); font-size: .75rem; }
+.header-menu__item { border-radius: 10px; font-size: .85rem; color: var(--ink); }
+.header-menu__item:hover { background: var(--ivory); }
+@media (max-width: 650px) {
+  .header { padding: 1rem; grid-template-columns: 1fr auto; gap: .75rem; }
+  .header-nav { grid-column: 1 / -1; grid-row: 2; width: 100%; }
+  .header-nav a { flex: 1; }
+  .header__account-wrap { grid-column: 2; grid-row: 1; }
+  .header__account-name { max-width: 100px; }
 }

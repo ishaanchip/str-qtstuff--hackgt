@@ -1,4 +1,14 @@
-*{
-  margin:0;
-  padding:0;
-}
+:root { --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; --ivory: #FAF7F2; --ink: #242424; --plum: #72566B; --muted: #716970; --line: #e8e0df; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--ivory); color: var(--ink); font-family: var(--font-sans); line-height: 1.5; }
+button, input, select { font-family: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--plum); outline-offset: 4px; }
+button:disabled { cursor: not-allowed; opacity: .6; }
+.studio-eyebrow { color: var(--plum); font-size: .7rem; font-weight: 700; letter-spacing: .16em; margin-bottom: .75rem; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* Preserve the original signup page without changing the styling studio. */
+body:has(.home) { background: #fff; color: #000; line-height: normal; }
+.home, .home * { box-sizing: content-box; }
+.app:has(.home) > .header { max-width: none; padding: 1rem 1.5rem; border-bottom: 0; }

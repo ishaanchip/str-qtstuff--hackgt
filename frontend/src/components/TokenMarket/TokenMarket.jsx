@@ -66,15 +66,18 @@ function TokenMarket() {
   }
 
   return (
-    <div className="token-market">
-      <h1 className="token-market__title">Tokens</h1>
-      {error && <p className="token-market__status token-market__status--error">{error}</p>}
-      {message && <p className="token-market__status">{message}</p>}
+    <main className="token-market">
+      <header className="token-market__intro">
+        <p className="studio-eyebrow">YOUR PERSONAL STYLING STUDIO</p>
+        <h1 className="token-market__title">Choose a token pack and keep exploring your style.</h1>
+      </header>
+      {error && <p role="alert" className="token-market__status token-market__status--error">{error}</p>}
+      {message && <p role="status" className="token-market__status">{message}</p>}
 
       <div className="token-market__grid">
         {TOKEN_PACKS.map((pack) => (
           <article key={pack.id} className="token-pack">
-            {pack.bonus && <p className="token-pack__bonus">{pack.bonus}% BONUS!</p>}
+            {pack.bonus && <p className="token-pack__bonus">{pack.bonus}% bonus</p>}
             <div className="token-pack__body">
               <div className={`token-pack__coins token-pack__coins--${pack.id}`} aria-hidden="true">
                 {Array.from({ length: pack.stack }).map((_, index) => (
@@ -90,12 +93,12 @@ function TokenMarket() {
               onClick={() => handleBuy(pack)}
               disabled={Boolean(buyingId)}
             >
-              {buyingId === pack.id ? 'Redirecting…' : `$${pack.price}`}
+              {buyingId === pack.id ? 'Redirecting…' : `Buy for $${pack.price}`}
             </button>
           </article>
         ))}
       </div>
-    </div>
+    </main>
   )
 }
 

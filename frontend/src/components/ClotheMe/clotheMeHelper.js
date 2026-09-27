@@ -34,7 +34,7 @@ export function getBestColors(palette) {
     .slice(0, 16);
 }
 
-export async function searchClothes({ colors, amountOfClothes = 3, gender = "male" }) {
+export async function searchClothes({ colors, amountOfClothes = 10, gender = "male" }) {
   const { data } = await axios.post(
     `${API_BASE_URL}/clothes-search`,
     { colors, amountOfClothes, gender },

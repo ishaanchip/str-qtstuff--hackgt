@@ -73,7 +73,7 @@ function Header() {
       <NavLink to="/" className="header__title">grwm.</NavLink>
 
       {email && (
-        <nav className="header-nav">
+        <nav className="header-nav" aria-label="Main navigation">
           <NavLink to="/clothe-me">Clothe Me</NavLink>
           <NavLink to="/token-market">Token Market</NavLink>
         </nav>
@@ -87,7 +87,9 @@ function Header() {
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
           >
-            {firstName || 'Account'}
+            <span className="header__initial" aria-hidden="true">{initial}</span>
+            <span className="header__account-name">{firstName || 'Account'}</span>
+            <svg className={`header__chevron${menuOpen ? ' header__chevron--open' : ''}`} width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
 
           {menuOpen && (
