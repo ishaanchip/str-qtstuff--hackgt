@@ -24,7 +24,9 @@ def load_image(path: Path | BytesIO) -> np.ndarray:
     with Image.open(path) as source:
         image = ImageOps.exif_transpose(source)
         if 'A' in image.getbands() or 'transparency' in image.info:
-            raise ValueError('Use an opaque RGB portrait; transparency is unsupported.')
+            if image.convert('RGBA').getchannel('A').getextrema() != (255, 255):
+                raise ValueError('Use an opaque RGB portrait; transparency is unsupported.')
+            image = image.convert('RGB')
         if image.info.get('icc_profile'):
             image = ImageCms.profileToProfile(
                 image, ImageCms.ImageCmsProfile(BytesIO(image.info['icc_profile'])),

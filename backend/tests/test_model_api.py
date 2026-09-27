@@ -69,3 +69,16 @@ def test_missing_models(server):
     (server.model_dir / model_api.MODEL_FILES[0]).unlink()
     assert not json.loads(request(server,'GET','/api/health')[2])['models_ready']
     assert request(server,'POST','/api/analyze',b'x',{'Content-Type':'image/png'})[0] == 503
+
+
+@pytest.mark.parametrize('path', ['/', '/index.html', '/scan.js', '/try-on', '/tryon-assets/sdk.js'])
+def test_api_does_not_serve_removed_frontend(server, path):
+    status, headers, body = request(server, 'GET', path)
+    assert status == 404
+    assert headers['Content-Type'] == 'application/json'
+    assert json.loads(body) == {'error': 'Not found.'}
+
+
+def test_api_does_not_expose_try_on_provider(server):
+    assert request(server, 'POST', '/api/try-on/token', b'{}',
+                   {'Content-Type': 'application/json'})[0] == 404

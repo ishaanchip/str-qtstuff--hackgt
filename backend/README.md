@@ -1,15 +1,19 @@
-# Single-photo color extraction — Phases 1–3
+# Portrait color analysis backend
 
-For a separate frontend, use the standalone [Model API](MODEL_API.md):
-`python -m backend.app.model_api --port 8000 --allow-origin http://localhost:3000`.
-This serves only portrait analysis and palette JSON, without the website,
-clothing scraper or try-on services.
+This repository provides a standalone portrait-to-palette API and a Python analysis
+package. The previous frontend and web/try-on server have been removed.
 
-## Web face scan
+Start the API from the repository root:
 
-Run `.venv/bin/python -m backend.app.api --port 5173` from the repository root,
-then open http://localhost:5173 to capture or upload a portrait, view palette scores,
-and explore clothing ideas ranked by color. See [web setup](../web/README.md).
+```sh
+.venv/bin/python -m backend.app.model_api --port 8000 --allow-origin http://localhost:3000
+```
+
+See [MODEL_API.md](MODEL_API.md) for installation, model downloads, CORS settings,
+the request/response contract, a JavaScript integration example, and instructions
+for copying the backend into another repository.
+
+## Color extraction and profiling
 
 Phases 4–7 are now available through `python test_profile.py photo1.jpg [photo2.jpg photo3.jpg]`. See [PROFILE.md](PROFILE.md) for multi-photo aggregation, facial characteristics, seasonal affinities, clothing-color ranking, and callable interfaces. The single-photo extraction CLI below remains available.
 
@@ -44,7 +48,7 @@ backend/
 
 ## 3. Complete code
 
-The complete implementation is in `app/`; run it as a module from the repository root. The existing root `test.py` is unchanged.
+The complete implementation is in `app/`; run it as a module from the repository root. The root `test_profile.py` provides a multi-photo profiling CLI.
 
 Skin sampling expands the original safe cheek/forehead polygons from 0.65 to 0.90 of their landmark-defined size (about 1.9× their area), intersects face-skin segmentation, and rejects clipped exposures and strong adaptive LAB outliers. It does not discard fixed lightness percentiles. The three regional medians receive equal weight in the final median, and every pair is compared with Delta E 76.
 

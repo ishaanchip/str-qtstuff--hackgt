@@ -121,6 +121,14 @@ def test_debug_export_is_explicit_and_never_overwrites(tmp_path: Path):
         save_debug(rgb, {'skin': result}, path)
 
 
+def test_loader_accepts_opaque_rgba(tmp_path: Path):
+    path = tmp_path / 'opaque.png'
+    Image.new('RGBA', (30, 30), (120, 80, 60, 255)).save(path)
+    rgb = load_image(path)
+    assert rgb.shape == (30, 30, 3)
+    assert (rgb == [120, 80, 60]).all()
+
+
 def test_loader_honors_exif_and_rejects_transparency(tmp_path: Path):
     path = tmp_path / 'rotated.jpg'
     image = Image.new('RGB', (60, 30))

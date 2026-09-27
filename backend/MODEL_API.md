@@ -1,8 +1,8 @@
 # Connect a new frontend to the color model
 
 Run the independent service in `backend/app/model_api.py`. It imports the image
-analysis and palette pipeline directly, with no dependency on `web/`, Channel3,
-Decart, API keys, or the website's `api.py`.
+analysis and palette pipeline directly. No frontend, shopping service, try-on
+provider, or API key is required. The previous frontend and web server have been removed.
 
 This is a portrait-to-palette service: pretrained MediaPipe models locate facial
 regions, Python measures their colors, and styling heuristics rank clothing
@@ -98,9 +98,10 @@ curl -X POST http://localhost:8000/api/analyze \
 Copy the entire `backend/` directory (including `__init__.py` and the model files,
 which are downloaded separately because Git ignores them). Install
 `requirements-model.txt` and run from the directory containing `backend/`.
-`web/` and `clothes_scraping/` are unnecessary. Keep the whole `app/` package
-because the pipeline imports vision, color, configuration and recommendation
-modules. The existing `api.py` need not be run or imported.
+No other repository directories are required: root-level `models/` and `output/`
+are independent artifacts, not API dependencies. Keep the
+whole `app/` package because the pipeline imports vision, color, configuration
+and recommendation modules. The API never serves frontend files.
 
 For Python callers with no HTTP layer:
 
