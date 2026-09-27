@@ -1,5 +1,10 @@
 # Single-photo color extraction — Phases 1–3
 
+For a separate frontend, use the standalone [Model API](MODEL_API.md):
+`python -m backend.app.model_api --port 8000 --allow-origin http://localhost:3000`.
+This serves only portrait analysis and palette JSON, without the website,
+clothing scraper or try-on services.
+
 ## Web face scan
 
 Run `.venv/bin/python -m backend.app.api --port 5173` from the repository root,
