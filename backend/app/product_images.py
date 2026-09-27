@@ -82,7 +82,22 @@ def get_image(token):
             image = ImageOps.exif_transpose(image)
             image.thumbnail((1024, 1024))
             output = BytesIO()
-            image.convert('RGBA').save(output, format='PNG')
+            garment_reference(image).save(output, format='PNG')
             return output.getvalue()
     except (UnidentifiedImageError, Image.DecompressionBombError, HTTPException) as error:
         raise ValueError('Invalid product image') from error
+
+
+def garment_reference(image):
+    """Send only confidently segmented clothing, never the original model photo."""
+    import numpy as np
+    import cv2
+    from .outfit_rating import clothing_mask
+    rgb = np.array(image.convert('RGB'))
+    mask = cv2.erode((clothing_mask(rgb) >= .8).astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool)
+    if mask.sum() < 150 or mask.mean() < .01:
+        raise ValueError('Could not isolate clothing from this product photo. Choose another product reference.')
+    clean = np.full_like(rgb, 255)
+    clean[mask] = rgb[mask]
+    ys, xs = np.where(mask)
+    return Image.fromarray(clean[ys.min():ys.max()+1, xs.min():xs.max()+1])

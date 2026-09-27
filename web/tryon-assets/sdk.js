@@ -7504,7 +7504,7 @@ async function gd(e, t) {
 	for (let r of e.filter((e) => e.source === "shop")) {
 		if (!/^\/api\/clothing\/image\/[A-Za-z0-9_-]+$/.test(r.reference_image || "")) throw Error(`No product photo for ${r.name}. Choose another item.`);
 		let e = await fetch(r.reference_image, { signal: t });
-		if (!e.ok) throw Error(`Could not load the photo for ${r.name}. Search again or choose another item.`);
+		if (!e.ok) throw Error(`Could not prepare a clothing-only photo for ${r.name}. Choose another product.`);
 		n.push({
 			file: await e.blob(),
 			category: r.category === "Bottoms" ? "jeans" : r.category === "Accessories" ? "accessories" : "shirt"
@@ -7517,7 +7517,7 @@ async function _d({ apiKey: e, stream: t, items: n, signal: r, occasion: i = "",
 	r?.throwIfAborted();
 	let c = fd({ apiKey: e }), l = n.map((e) => e.source === "shop" ? `${e.category}: ${e.brand || ""} ${e.name} (match its product reference photo)` : `${e.color} (${e.hex}) ${e.name}`).join("; "), u = [];
 	n.some((e) => ["Tops", "Layers"].includes(e.category)) || u.push("upper-body clothing"), n.some((e) => e.category === "Bottoms") || u.push("pants"), n.some((e) => e.category === "Accessories") || u.push("accessories");
-	let d = `Style the person in this complete selection together: ${l}. ` + (s ? "The labeled reference board shows the selected store products. Match their garment colors, patterns, logos and shapes. Do not render the board, labels, or people from reference photos. " : "") + "Change only the selected clothing and accessories. Keep their face, hair, body shape, pose, and surroundings unchanged. Natural fabric, realistic lighting." + (i ? ` Occasion context: ${i}. Keep the selected garments unchanged by this context.` : "") + (u.length ? ` Keep their existing ${u.join(", ")} unchanged.` : "");
+	let d = n.filter((e) => ["Tops", "Layers"].includes(e.category)).map((e) => e.name), f = d.length > 1 ? ` Layer tops from innermost to outermost in this order: ${d.join(", ")}.` : "", p = `Style the person in this complete selection together: ${l}. ` + (s ? "The labeled reference board shows the selected store products. Match their garment colors, patterns, logos and shapes. Do not render the board, labels, or people from reference photos. " : "") + f + "Change only the selected clothing and accessories. Preserve the camera person’s exact face, facial features, skin tone, hair, expression and identity in every frame. Never generate a replacement face or copy any reference person. Keep body shape, pose, and surroundings unchanged. Natural fabric, realistic lighting." + (i ? ` Occasion context: ${i}. Keep the selected garments unchanged by this context.` : "") + (u.length ? ` Keep their existing ${u.join(", ")} unchanged.` : "");
 	return c.realtime.connect(t, {
 		model: yl.realtime("lucy-2.5"),
 		onRemoteStream: a,
@@ -7525,8 +7525,8 @@ async function _d({ apiKey: e, stream: t, items: n, signal: r, occasion: i = "",
 		initialState: {
 			...s ? { image: s } : {},
 			prompt: {
-				text: d,
-				enhance: !0
+				text: p,
+				enhance: !1
 			}
 		}
 	});

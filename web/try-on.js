@@ -1,9 +1,10 @@
 const $ = id => document.getElementById(id);
 let result, session, camera, timer, controller, generation = 0, busy = false;
-const outfit = {shirt: null, pants: null, accessory: null};
+const outfit = {shirt: [], pants: null, accessory: []};
 const slots = {shirt: 'Shirt / layer', pants: 'Pants', accessory: 'Accessory'};
 const slotFor = item => item.category === 'Bottoms' ? 'pants' : item.category === 'Accessories' ? 'accessory' : 'shirt';
-const chosenItems = () => Object.values(outfit).filter(Boolean);
+const chosenItems = () => Object.values(outfit).flat().filter(Boolean);
+let ratingRequest = null;
 let shopItems = [];
 let activeOccasion = '';
 let selectedColor = null;
@@ -30,6 +31,9 @@ function garment(item) {
   path.setAttribute('fill', item.hex); path.setAttribute('stroke', '#0003'); svg.append(path); return svg;
 }
 function stop(message = 'Preview is off. Click Try to start a new session.') {
+  ratingRequest?.abort(); ratingRequest = null;
+  $('rate-outfit').disabled = chosenItems().length === 0; $('rating-result').hidden = true; $('rating-error').hidden = true;
+  $('rating-status').textContent = 'Add clothing to rate how the selected colors work together.';
   generation++; controller?.abort(); controller = null; clearTimeout(timer);
   session?.disconnect(); session = null;
   camera?.getTracks().forEach(track => track.stop()); camera = null;
@@ -39,15 +43,20 @@ function stop(message = 'Preview is off. Click Try to start a new session.') {
 }
 function select(item) {
   const slot = slotFor(item);
-  if (outfit[slot]?.id === item.id) return;
-  outfit[slot] = item;
+  if (chosenItems().some(chosen => chosen.id === item.id)) return;
+  if (slot === 'pants') outfit.pants = item;
+  else {
+    if (outfit[slot].length >= (slot === 'shirt' ? 6 : 12)) { error('Remove an item before adding more to this slot.'); return; }
+    outfit[slot].push(item);
+  }
   stop('Outfit updated. Click Try to preview your choices together.');
   error(); renderOutfit(); renderShop();
 }
 function renderOutfit() {
   $('outfit').replaceChildren();
   for (const [slot, label] of Object.entries(slots)) {
-    const item = outfit[slot];
+    const items = (Array.isArray(outfit[slot]) ? outfit[slot] : [outfit[slot]]).filter(Boolean);
+    for (const item of items.length ? items : [null]) {
     const row = element('div', 'outfit-slot'); row.dataset.slot = slot;
     const info = element('div', 'outfit-info');
     info.append(element('strong', '', label), element('span', '', item ? `${item.color} ${item.name}` : 'Keep what I’m wearing'));
@@ -57,15 +66,24 @@ function renderOutfit() {
     }
     row.append(info);
     if (item) {
+      if (slot === 'shirt' && items.length > 1) {
+        const front = element('button', 'remove-item', 'Make outermost');
+        front.disabled = item === items.at(-1);
+        front.addEventListener('click', () => { outfit.shirt = outfit.shirt.filter(i => i.id !== item.id).concat(item); stop('Layer order updated.'); renderOutfit(); });
+        row.append(front);
+        info.append(element('span', 'muted', item === items.at(-1) ? 'Outermost layer' : 'Inner layer'));
+      }
       const remove = element('button', 'remove-item', 'Remove');
-      remove.setAttribute('aria-label', `Remove ${label}`);
+      remove.setAttribute('aria-label', `Remove ${label}${items.length > 1 ? ": " + item.name : ""}`);
       remove.addEventListener('click', () => {
-        outfit[slot] = null; stop('Outfit updated. Click Try to preview your choices.');
+        if (slot === 'pants') outfit.pants = null; else outfit[slot] = outfit[slot].filter(i => i.id !== item.id);
+        stop('Outfit updated. Click Try to preview your choices.');
         error(); renderOutfit(); renderShop();
       });
       row.append(remove);
     }
     $('outfit').append(row);
+    }
   }
 }
 $('try').addEventListener('click', async () => {
@@ -99,6 +117,7 @@ $('try').addEventListener('click', async () => {
     });
     if (attempt !== generation) { connected.disconnect(); return; }
     session = connected; clearTimeout(timer);
+    $('rate-outfit').disabled = !canRate();
     session.on?.('error', () => { if (attempt === generation) { stop(); error('The try-on connection failed. Click Try to reconnect.'); } });
     session.on?.('sessionEnded', () => { if (attempt === generation) stop('Session ended. Click Try to start again.'); });
     timer = setTimeout(() => stop('Five-minute session finished. Click Try for another session.'), 300000);
@@ -172,7 +191,7 @@ function renderShop() {
   $('shop-products').replaceChildren();
   for (const item of shopItems) {
       const url = httpsURL(item.url); if (!url) continue;
-      const selected = outfit[slotFor(item)]?.id === `shop:${item.id}`;
+      const selected = chosenItems().some(chosen => chosen.id === `shop:${item.id}`);
       const card = element('article', `garment-card shop-card${selected ? ' selected' : ''}`);
       const art = element('div', 'garment-art');
       const imageURL = httpsURL(item.image);
@@ -223,3 +242,50 @@ function chooseColor(color) {
   loadShop();
 }
 $('all-colors').addEventListener('click', () => chooseColor(null));
+
+function canRate() { return chosenItems().length > 0; }
+function ratingItem(item) {
+  return {item: item.name, color_name: item.color || item.palette_name || 'Selected color',
+    hex: item.photo_color_match?.measured_hex || item.hex, pattern: item.pattern || 'unknown'};
+}
+$('rate-outfit').addEventListener('click', async () => {
+  if (!canRate() || ratingRequest) return;
+  const attempt = generation;
+  const request = new AbortController(); ratingRequest = request;
+  const timeout = setTimeout(() => request.abort(), 90000);
+  $('rate-outfit').disabled = true; $('rating-result').hidden = true; $('rating-error').hidden = true;
+  $('rating-status').textContent = 'Analyzing clothing colors…';
+  try {
+    const payload = {
+      shirt_layer: outfit.shirt.map(ratingItem),
+      pant: outfit.pants ? ratingItem(outfit.pants) : null,
+      accessories: outfit.accessory.map(ratingItem),
+    };
+    const response = await fetch('/api/outfit/rate', {method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload), signal: request.signal});
+    const data = await response.json();
+    if (attempt !== generation) return;
+    if (!response.ok) throw new Error(data.error || 'Could not rate this preview.');
+    $('rating-score').textContent = `${data.overall_score} / 10`;
+    const scores = data.subscores;
+    $('rating-breakdown').textContent = `Main colors: ${scores.shirt_pant_harmony}/10 · Accessories: ${scores.accessory_cohesion ?? 'not selected'} · Contrast: ${scores.contrast}/10 · Balance: ${scores.balance}/10`;
+    $('rating-colors').replaceChildren();
+    for (const item of chosenItems()) {
+      const color = ratingItem(item);
+      const swatch = element('span', 'rating-swatch', `${color.item}: ${color.hex}`);
+      const chip = element('i', 'match-dot'); chip.style.background = color.hex; swatch.prepend(chip); $('rating-colors').append(swatch);
+    }
+    $('rating-explanation').textContent = `${data.summary} ${data.what_works}`;
+    $('rating-suggestion').textContent = data.improvement;
+    $('rating-method').textContent = `${data.harmony_type} · Selected colors only. Pattern details are limited to available product data.`;
+    $('rating-result').hidden = false;
+    $('rating-status').textContent = 'Outfit color rating complete.';
+  } catch (error) {
+    if (attempt !== generation) return;
+    $('rating-error').textContent = error.name === 'AbortError' ? 'Rating timed out. Please retry.' : error.message;
+    $('rating-error').hidden = false; $('rating-status').textContent = 'No score available for this outfit.';
+  } finally {
+    clearTimeout(timeout);
+    if (ratingRequest === request) { ratingRequest = null; $('rate-outfit').disabled = !canRate(); }
+  }
+});

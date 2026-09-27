@@ -13,6 +13,7 @@ from urllib.error import HTTPError, URLError
 
 from .main import DEFAULT_MODELS
 from .pipeline import analyze_photos
+from .outfit_analyst import rate_selected_outfit
 from clothes_scraping.clothes_scraper import getClothesInfo, validate_palette, validate_occasion, CATEGORIES, ScraperError
 from .product_images import register_images, get_image
 from time import monotonic
@@ -126,8 +127,8 @@ class Handler(SimpleHTTPRequestHandler):
         if path.startswith('/api/clothing/image/'):
             try:
                 image = get_image(path.rsplit('/', 1)[-1])
-            except (ValueError, OSError):
-                return self.json_response(422, {'error': 'Product photo unavailable. Try another item or search again.'})
+            except (ValueError, OSError, RuntimeError):
+                return self.json_response(422, {'error': 'Could not prepare a clothing-only reference. Choose another product photo.'})
             self.send_response(200)
             self.send_header('Content-Type', 'image/png')
             self.send_header('Content-Length', str(len(image)))
@@ -151,6 +152,23 @@ class Handler(SimpleHTTPRequestHandler):
         return self.json_response(405, {'error': 'Method not allowed'})
 
     def do_POST(self):
+        if self.path == '/api/outfit/rate':
+            allowed = {f'http://localhost:{self.server.server_port}', f'http://127.0.0.1:{self.server.server_port}'}
+            if self.headers.get('Origin') not in allowed:
+                return self.json_response(403, {'error': 'Use the local fitting room to rate your outfit.'})
+            if self.headers.get('Content-Type', '').split(';')[0] != 'application/json':
+                return self.json_response(415, {'error': 'Send the selected outfit as JSON.'})
+            try:
+                length = int(self.headers.get('Content-Length', '0'))
+                if not 0 < length <= 20000:
+                    return self.json_response(413, {'error': 'Outfit request is too large or empty.'})
+                self.connection.settimeout(10)
+                raw = self.rfile.read(length)
+                if len(raw) != length:
+                    raise ValueError('Incomplete outfit upload.')
+                return self.json_response(200, rate_selected_outfit(json.loads(raw)))
+            except (ValueError, TypeError, KeyError, OSError) as error:
+                return self.json_response(400, {'error': 'Invalid outfit: send shirt_layer, pant and accessories with valid HEX colors.'})
         if self.path == '/api/clothing/search':
             allowed = {f'http://localhost:{self.server.server_port}', f'http://127.0.0.1:{self.server.server_port}'}
             if self.headers.get('Origin') not in allowed:

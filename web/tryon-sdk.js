@@ -8,7 +8,7 @@ export async function productReference(items, signal) {
       throw new Error(`No product photo for ${item.name}. Choose another item.`);
     }
     const response = await fetch(item.reference_image, {signal});
-    if (!response.ok) throw new Error(`Could not load the photo for ${item.name}. Search again or choose another item.`);
+    if (!response.ok) throw new Error(`Could not prepare a clothing-only photo for ${item.name}. Choose another product.`);
     references.push({file: await response.blob(), category: item.category === 'Bottoms' ? 'jeans' : item.category === 'Accessories' ? 'accessories' : 'shirt'});
   }
   return composeOutfit(references);
@@ -25,13 +25,15 @@ export async function connectTryOn({apiKey, stream, items, signal, occasion = ''
   if (!items.some(item => ['Tops', 'Layers'].includes(item.category))) unchanged.push('upper-body clothing');
   if (!items.some(item => item.category === 'Bottoms')) unchanged.push('pants');
   if (!items.some(item => item.category === 'Accessories')) unchanged.push('accessories');
+  const layerNames = items.filter(item => ['Tops', 'Layers'].includes(item.category)).map(item => item.name);
+  const layering = layerNames.length > 1 ? ` Layer tops from innermost to outermost in this order: ${layerNames.join(', ')}.` : '';
   const prompt = `Style the person in this complete selection together: ${descriptions}. ` +
     (image ? 'The labeled reference board shows the selected store products. Match their garment colors, patterns, logos and shapes. Do not render the board, labels, or people from reference photos. ' : '') +
-    `Change only the selected clothing and accessories. Keep their face, hair, body shape, pose, and surroundings unchanged. Natural fabric, realistic lighting.` +
+    layering + `Change only the selected clothing and accessories. Preserve the camera person’s exact face, facial features, skin tone, hair, expression and identity in every frame. Never generate a replacement face or copy any reference person. Keep body shape, pose, and surroundings unchanged. Natural fabric, realistic lighting.` +
     (occasion ? ` Occasion context: ${occasion}. Keep the selected garments unchanged by this context.` : '') +
     (unchanged.length ? ` Keep their existing ${unchanged.join(', ')} unchanged.` : '');
   return client.realtime.connect(stream, {
     model: models.realtime('lucy-2.5'), onRemoteStream, onConnectionChange,
-    initialState: {...(image ? {image} : {}), prompt: {text: prompt, enhance: true}},
+    initialState: {...(image ? {image} : {}), prompt: {text: prompt, enhance: false}},
   });
 }

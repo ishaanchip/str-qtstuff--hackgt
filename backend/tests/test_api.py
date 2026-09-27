@@ -139,3 +139,32 @@ def test_tryon_rejects_malformed_provider_response(monkeypatch, body):
     monkeypatch.setattr(api, 'urlopen', lambda *args, **kwargs: BytesIO(body))
     with pytest.raises(RuntimeError, match='invalid token response'):
         api.create_tryon_token('http://localhost:5174')
+
+
+def test_outfit_rating_contract_and_errors(server, monkeypatch):
+    headers = {'Content-Type': 'application/json', 'Origin': f'http://localhost:{server.server_port}'}
+    payload = json.dumps({'shirt_layer': [{'item': 'tee', 'color_name': 'navy', 'hex': '#1F2A44', 'pattern': 'solid'}], 'pant': None, 'accessories': []})
+    assert request(server, 'POST', '/api/outfit/rate', payload, headers)[0] == 200
+    assert request(server, 'POST', '/api/outfit/rate', payload, {'Content-Type': 'application/json'})[0] == 403
+    assert request(server, 'POST', '/api/outfit/rate', '{"image":"!"}', headers)[0] == 400
+    with api.ANALYSIS_LOCK:
+        assert request(server, 'POST', '/api/outfit/rate', payload, headers)[0] == 200
+    def fail(*args):
+        raise ValueError('Invalid outfit')
+    monkeypatch.setattr(api, 'rate_selected_outfit', fail)
+    assert request(server, 'POST', '/api/outfit/rate', payload, headers)[0] == 400
+    assert api.ANALYSIS_LOCK.acquire(blocking=False)
+    api.ANALYSIS_LOCK.release()
+
+
+def test_selected_outfit_can_be_rated_without_preview(server):
+    outfit = {'shirt_layer': [{'item': 'tee', 'color_name': 'navy', 'hex': '#1F2A44', 'pattern': 'solid'}], 'pant': None, 'accessories': []}
+    headers = {'Content-Type': 'application/json', 'Origin': f'http://localhost:{server.server_port}'}
+    status, body = request(server, 'POST', '/api/outfit/rate', json.dumps(outfit), headers)
+    assert status == 200
+    result = json.loads(body)
+    assert set(result) == {'overall_score', 'harmony_type', 'subscores', 'summary', 'what_works', 'improvement', 'suggested_hex'}
+    assert 1 <= result['overall_score'] <= 10
+    assert result['subscores']['accessory_cohesion'] is None
+    outfit['shirt_layer'][0]['hex'] = 'invalid'
+    assert request(server, 'POST', '/api/outfit/rate', json.dumps(outfit), headers)[0] == 400

@@ -6,6 +6,8 @@ from backend.tests.test_api import server, request
 
 
 def test_only_registered_images_are_served_and_decoded(server, monkeypatch):
+    import numpy as np
+    monkeypatch.setattr('backend.app.outfit_rating.clothing_mask', lambda rgb: np.ones(rgb.shape[:2]))
     image = BytesIO()
     Image.new('RGB', (20, 30), 'red').save(image, 'JPEG')
     monkeypatch.setattr(images, 'download_image', lambda url: image.getvalue())
@@ -39,3 +41,16 @@ def test_invalid_image_data_is_not_forwarded(monkeypatch):
     monkeypatch.setattr(images, 'download_image', lambda url: b'<html>not a photo</html>')
     with pytest.raises(ValueError):
         images.get_image(products[0]['reference_image'].rsplit('/',1)[-1])
+
+
+def test_reference_removes_model_and_background(monkeypatch):
+    import numpy as np
+    rgb = np.full((100, 100, 3), [200, 130, 90], np.uint8)
+    rgb[40:90, 20:80] = [20, 60, 180]
+    mask = np.zeros((100, 100)); mask[40:90, 20:80] = .99
+    monkeypatch.setattr('backend.app.outfit_rating.clothing_mask', lambda rgb: mask)
+    cutout = np.asarray(images.garment_reference(Image.fromarray(rgb)))
+    assert np.all(cutout == [20, 60, 180])
+    monkeypatch.setattr('backend.app.outfit_rating.clothing_mask', lambda rgb: mask * 0)
+    with pytest.raises(ValueError, match='Could not isolate clothing'):
+        images.garment_reference(Image.fromarray(rgb))
