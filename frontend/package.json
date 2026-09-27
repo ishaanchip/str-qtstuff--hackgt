@@ -10,13 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@decartai/sdk": "^0.2.3",
     "@mediapipe/tasks-vision": "^1.0.1",
     "@tanstack/react-query": "^5.103.3",
     "axios": "^1.20.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-icons": "^5.7.0",
     "react-router-dom": "^7.18.4",
-    "react-webcam": "^7.2.0"
+    "react-webcam": "^7.2.0",
+    "stripe": "^22.6.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

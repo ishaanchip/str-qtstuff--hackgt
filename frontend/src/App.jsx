@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import Header from './components/Header/Header'
 import Home from './components/Home/Home'
 import ClotheMe from './components/ClotheMe/ClotheMe'
-import YourPallete from './components/YourPallete/YourPallete'
+import TokenMarket from './components/TokenMarket/TokenMarket'
 
 import './App.css'
 
@@ -13,7 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/clothe-me" element={<ClotheMe />} />
-        <Route path="/your-pallete" element={<YourPallete />} />
+        <Route path="/token-market" element={<TokenMarket />} />
       </Routes>
     </div>
   )

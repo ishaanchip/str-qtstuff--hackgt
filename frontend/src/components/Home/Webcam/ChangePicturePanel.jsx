@@ -50,7 +50,7 @@ export default function ChangePicturePanel({ image, onRetake, onChanged }) {
           onClick={handleChangeImage}
           className="webcam-recorder__button webcam-recorder__button--photo"
         >
-          {submitting ? "Saving…" : "Change image"}
+          {submitting ? "Updating palette…" : "Change image"}
         </button>
       </div>
     </section>

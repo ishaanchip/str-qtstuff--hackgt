@@ -83,7 +83,8 @@
 .webcam-recorder__login-prompt {
   margin-top: 12px;
   color: #6b7280;
-  font-size: 14px;
+  font-family: "Permanent Marker", cursive;
+  font-size: 12px;
   text-align: center;
 }
 
@@ -314,6 +315,8 @@
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  font-family: "Permanent Marker", cursive;
+  font-weight: 400;
 }
 
 .signup-panel__close {
@@ -337,12 +340,14 @@
 
 .signup-panel__title {
   margin: 0 0 4px;
-  font-size: 24px;
+  font-size: 20px;
+  font-weight: 400;
 }
 
 .signup-panel__lead {
   margin: 0 0 16px;
   color: #444;
+  font-size: 13px;
 }
 
 .signup-panel__photo {
@@ -365,13 +370,14 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 400;
 }
 
 .signup-panel__input {
-  padding: 10px 12px;
-  font-size: 16px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 14px;
   font-weight: 400;
   border: 1px solid #d1d5db;
   border-radius: 8px;
@@ -388,7 +394,7 @@
 .signup-panel__login {
   margin: 0;
   color: #9ca3af;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
 }
 
@@ -409,6 +415,7 @@
 .signup-panel__error {
   margin: 0;
   color: #dc2626;
+  font-size: 12px;
 }
 
 .signup-panel__warning {
@@ -418,6 +425,13 @@
   border: 1px solid #f59e0b;
   border-radius: 8px;
   color: #92400e;
+  font-size: 12px;
+}
+
+.signup-panel .webcam-recorder__button {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 8px 16px;
 }
 
 .signup-panel__error--warning {

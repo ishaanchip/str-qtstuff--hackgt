@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
+import { Navigate } from 'react-router-dom'
 import { checkAccount, clearUserEmail, getUserEmail, isLoggedIn, USER_EMAIL_EVENT } from './homeHelper'
 import './Home.css'
 import WebcamRecorder from './Webcam/WebcamRecorder'
-import HomeNav from './HomeNav/HomeNav'
 
 const FLOAT_WORDS = [
   { text: 'Find new outfits', className: 'home__float--1' },
   { text: 'Clothe me', className: 'home__float--2' },
-  { text: 'Your pallete', className: 'home__float--3' },
+  { text: 'Best colors', className: 'home__float--3' },
   { text: 'Try it on', className: 'home__float--4' },
   { text: 'Get ready', className: 'home__float--5' },
   { text: 'Your closet', className: 'home__float--6' },
@@ -53,28 +53,28 @@ function Home() {
     return () => window.removeEventListener(USER_EMAIL_EVENT, syncSession)
   }, [])
 
+  if (loggedIn) {
+    return <Navigate to="/clothe-me" replace />
+  }
+
   return (
     <div className="home">
-      {loggedIn ? (
-        <HomeNav onLogout={() => setLoggedIn(false)} />
-      ) : (
-        <div className="home__stage">
-          {FLOAT_WORDS.map((word) => (
-            <span key={word.className} className={`home__float ${word.className}`}>
-              {word.text}
-            </span>
-          ))}
-          <div className="home__camera">
-            <WebcamRecorder
-              onSnapshot={(img, t) => console.log("snapshot at", t, "ms")}
-              onAccount={(accountString) => console.log(accountString)}
-              onSessionStart={(email) => {
-                if (email) setLoggedIn(true)
-              }}
-            />
-          </div>
+      <div className="home__stage">
+        {FLOAT_WORDS.map((word) => (
+          <span key={word.className} className={`home__float ${word.className}`}>
+            {word.text}
+          </span>
+        ))}
+        <div className="home__camera">
+          <WebcamRecorder
+            onSnapshot={(img, t) => console.log("snapshot at", t, "ms")}
+            onAccount={(accountString) => console.log(accountString)}
+            onSessionStart={(email) => {
+              if (email) setLoggedIn(true)
+            }}
+          />
         </div>
-      )}
+      </div>
     </div>
   )
 }
