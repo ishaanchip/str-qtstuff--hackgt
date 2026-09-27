@@ -3,14 +3,9 @@ import axios from "axios";
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 export const USER_EMAIL_KEY = "userEmail";
 export const USER_EMAIL_EVENT = "user-email-changed";
-export const USER_TOKENS_EVENT = "user-tokens-changed";
 
 function notifyUserEmailChanged() {
   window.dispatchEvent(new Event(USER_EMAIL_EVENT));
-}
-
-export function notifyTokensChanged(tokens) {
-  window.dispatchEvent(new CustomEvent(USER_TOKENS_EVENT, { detail: { tokens } }));
 }
 
 export function isValidEmail(email) {
@@ -134,11 +129,10 @@ export async function updateAccountImage({ email, ref_img }) {
     throw new Error("Could not upload the image. Try taking the photo again.");
   }
 
-  const { data } = await axios.put(
-    `${API_BASE_URL}/account/image`,
-    { email, ref_img: imageUrl },
-    { timeout: 90000 }
-  );
+  const { data } = await axios.put(`${API_BASE_URL}/account/image`, {
+    email,
+    ref_img: imageUrl,
+  });
   return data;
 }
 

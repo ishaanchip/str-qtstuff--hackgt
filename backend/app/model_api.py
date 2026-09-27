@@ -76,7 +76,7 @@ class ModelHandler(BaseHTTPRequestHandler):
         if not self.server.analysis_lock.acquire(blocking=False):
             return self.respond(429, {'error': 'Another image is being analyzed. Retry shortly.'})
         try:
-            self.connection.settimeout(90)
+            self.connection.settimeout(30)
             data = self.rfile.read(length)
             if len(data) != length:
                 raise ValueError('Incomplete upload.')

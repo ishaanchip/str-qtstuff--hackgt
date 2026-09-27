@@ -8,32 +8,26 @@
 .header__title {
   justify-self: start;
   color: inherit;
-  font-family: "Permanent Marker", cursive;
-  font-size: 2.4rem;
-  font-style: italic;
-  font-weight: 400;
+  font-size: 2.75rem;
+  font-weight: 800;
   line-height: 1;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.03em;
   text-decoration: none;
 }
 
 .header-nav {
   display: flex;
-  gap: 1.75rem;
+  gap: 1.5rem;
   justify-self: center;
 }
 
 .header-nav a {
   color: inherit;
-  font-family: "Permanent Marker", cursive;
-  font-size: 1.15rem;
-  font-weight: 400;
   text-decoration: none;
 }
 
 .header-nav a.active {
-  text-decoration: underline;
-  text-underline-offset: 0.28rem;
+  font-weight: 600;
 }
 
 .header__account-wrap {
@@ -43,12 +37,10 @@
 
 .header__account {
   padding: 6px 14px;
-  border: 1px solid #111;
+  border: 1px solid #ccc;
   border-radius: 999px;
   background: #fff;
   color: inherit;
-  font-family: "Permanent Marker", cursive;
-  font-size: 0.95rem;
   cursor: pointer;
 }
 
@@ -108,13 +100,6 @@
   margin: 2px 0 0;
   color: #5f6368;
   font-size: 13px;
-}
-
-.header-menu__tokens {
-  margin: 4px 0 0;
-  color: #3f3f46;
-  font-family: Kalam, "Permanent Marker", cursive;
-  font-size: 0.9rem;
 }
 
 .header-menu__item {
