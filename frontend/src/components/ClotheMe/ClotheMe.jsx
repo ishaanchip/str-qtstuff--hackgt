@@ -261,8 +261,7 @@ function ClotheMe() {
                 <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
                   <path d="M24 12c0 8 16 8 16 0l14 8-7 13-7-4v25H24V29l-7 4-7-13 14-8Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
                 </svg>
-                <h3>Your next look starts here</h3>
-                <p>Add your favorite pieces, then select “Try on outfit” to see them on you.</p>
+                <p>Add your favorite pieces here!</p>
               </div>
             </div>
           )}
