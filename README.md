@@ -57,53 +57,13 @@ GRWM connects multiple AI technologies into one end-to-end experience:
 
 ---
 
-## 🏗️ Architecture
-
-```text
-                    ┌─────────────────┐
-                    │    Face Scan    │
-                    └────────┬────────┘
-                             ↓
-                    ┌─────────────────┐
-                    │ Color Analysis  │
-                    │      Model      │
-                    └────────┬────────┘
-                             ↓
-                    ┌─────────────────┐
-                    │ Personalized   │
-                    │  Color Palette  │
-                    └────────┬────────┘
-                             ↓
-                    ┌─────────────────┐
-                    │    Channel3     │
-                    │ Agentic Search  │
-                    └────────┬────────┘
-                             ↓
-                    ┌─────────────────┐
-                    │   Clothing      │
-                    │ Recommendations │
-                    └────────┬────────┘
-                             ↓
-                    ┌─────────────────┐
-                    │ Decart Lucy 2.5 │
-                    │ Virtual Try-On  │
-                    └────────┬────────┘
-                             ↓
-                    ┌─────────────────┐
-                    │  Final Outfit   │
-                    │   Experience    │
-                    └─────────────────┘
-```
-
----
-
 ## 💡 Inspiration
 
 We were inspired by how difficult it can be to turn a clothing idea in your head into an actual outfit.
 
 You might see a color palette, an outfit on social media, or have a certain look in mind, but finding pieces that actually match can mean hours of scrolling through different websites. Even after finding something you like, you still don't really know how it will look on you until you buy it.
 
-We wanted to make that process more intuitive — using AI to understand what works for you and AR to let you see it come to life before you commit.
+We wanted to make that process more intuitive by using AI to understand what works for you and AR to let you see it come to life before you commit and buy a piece of clothing.
 
 ---
 
@@ -129,24 +89,6 @@ We wanted to make that process more intuitive — using AI to understand what wo
 **AR / XR**
 
 * Real-Time Virtual Try-On
-
----
-
-## 📁 Project Structure
-
-```text
-GRWM/
-├── frontend/
-│   ├── package.json
-│   └── ...
-│
-├── backend-1/
-│   ├── package.json
-│   ├── index.js
-│   └── ...
-│
-└── README.md
-```
 
 ---
 
@@ -242,9 +184,3 @@ Our long-term goal is to make GRWM feel like an **AI stylist and virtual fitting
 Built for **HackGT**.
 
 GRWM explores how AI, computer vision, agentic search, and immersive technology can work together to create a more personalized shopping experience.
-
----
-
-## 👥 Team
-
-Built with ❤️ at HackGT.
